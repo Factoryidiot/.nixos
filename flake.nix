@@ -164,12 +164,12 @@
           ];
         };
 
-        ruru = mkNixosSystem {
-          name = "ruru";
-          username = "ruru";
+        rua = mkNixosSystem {
+          name = "rua";
+          username = "factory";
           isServer = true;
           modules = [
-            ./hosts/ruru/default.nix
+            ./hosts/rua/default.nix
             {
               system.stateVersion = "26.05";
             }
@@ -184,7 +184,7 @@
         nixos-system-tahi = self.nixosConfigurations.tahi.config.system.build.toplevel;
         nixos-system-kea = self.nixosConfigurations.kea.config.system.build.toplevel;
         nixos-system-whio = self.nixosConfigurations.whio.config.system.build.toplevel;
-        nixos-system-ruru = self.nixosConfigurations.ruru.config.system.build.toplevel;
+        nixos-system-rua = self.nixosConfigurations.rua.config.system.build.toplevel;
       };
 
     };

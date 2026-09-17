@@ -190,6 +190,30 @@ in
                 - url: \"http://172.16.1.200:3000\"
       EOF"
 
+            # 5. Jellyfin Route (jellyfin.lan -> rua server)
+            ${pkgs.incus}/bin/incus exec ${containerName} -- sh -c "cat <<'EOF' > /etc/traefik/conf.d/jellyfin.yml
+      http:
+        routers:
+          jellyfin:
+            rule: \"Host(\`jellyfin.lan\`)\"
+            service: jellyfin-service
+            entryPoints:
+              - websecure
+            tls:
+              certResolver: stepca
+
+        services:
+          jellyfin-service:
+            loadBalancer:
+              healthCheck:
+                path: /health
+                interval: 5s
+                timeout: 2s
+              servers:
+                - url: \"http://172.16.1.34:8096\"
+                - url: \"http://172.16.1.220:8096\"
+      EOF"
+
             ${pkgs.incus}/bin/incus exec ${containerName} -- systemctl restart traefik
     '';
   };

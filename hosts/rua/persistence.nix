@@ -1,4 +1,4 @@
-# ./hosts/ruru/persistence.nix
+# ./hosts/rua/persistence.nix
 { impermanence
 , specialArgs
 , ...
@@ -18,7 +18,22 @@ in
       "/etc/nix/inputs"
       "/var/lib/iwd"
       "/var/lib/nixos"
+      "/var/lib/systemd"
       "/var/log"
+      "/var/lib/docker"
+      "/var/lib/pihole"
+      {
+        directory = "/var/lib/jellyfin";
+        user = "jellyfin";
+        group = "jellyfin";
+        mode = "0750";
+      }
+      {
+        directory = "/var/cache/jellyfin";
+        user = "jellyfin";
+        group = "jellyfin";
+        mode = "0750";
+      }
     ];
 
     files = [
@@ -38,14 +53,6 @@ in
           directory = ".ssh";
           mode = "0700";
         }
-
-        # Media Player state and preferences
-        ".local/share/jellyfinmediaplayer"
-        ".config/jellyfinmediaplayer"
-
-        # Audio and system state
-        ".config/pulse"
-        ".local/state"
       ];
       files = [
         ".config/zsh/.zsh_history"
@@ -54,3 +61,4 @@ in
   };
 
 }
+
