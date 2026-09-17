@@ -53,34 +53,58 @@ in
   time.timeZone = "Pacific/Auckland";
   i18n.defaultLocale = "en_NZ.UTF-8";
 
-  # Networking: Gigabit Ethernet with static IP + DHCP fallback
+  # Networking: Replicated from tahi with systemd-networkd + nftables
   networking = {
     hostName = hostname;
+    useNetworkd = true;
+    useDHCP = false;
+    nftables.enable = true;
+    nameservers = [
+      "1.1.1.2"
+      "9.9.9.9"
+    ];
+    defaultGateway = {
+      address = "172.16.1.1";
+      interface = "eno1";
+    };
     firewall = {
       enable = true;
+      trustedInterfaces = [ "eno1" "wlan0" ];
       allowedTCPPorts = [
         22 # SSH
-        53 # DNS (Pi-hole)
-        8080 # Pi-hole Web Admin
         8096 # Jellyfin HTTP
       ];
       allowedUDPPorts = [
-        53 # DNS (Pi-hole)
         1900 # SSDP
         7359 # Jellyfin client discovery
       ];
     };
-    nameservers = [ "172.16.1.202" "1.1.1.1" ];
-    interfaces.eno1 = {
-      useDHCP = true;
-      ipv4.addresses = [
-        {
-          address = "172.16.1.220";
-          prefixLength = 24;
-        }
-      ];
+    interfaces = {
+      eno1 = {
+        useDHCP = true;
+        ipv4.addresses = [
+          {
+            address = "172.16.1.220";
+            prefixLength = 24;
+          }
+        ];
+        macAddress = "98:fa:9b:0d:e6:58";
+      };
+      wlan0.useDHCP = true;
     };
-    wireless.iwd.enable = true; # Keep Wi-Fi available as fallback
+    wireless.iwd.enable = true;
+  };
+
+  systemd.network.networks."40-eno1" = {
+    matchConfig.Name = "eno1";
+    networkConfig.DHCP = lib.mkForce "ipv4";
+    dhcpV4Config.ClientIdentifier = "mac";
+    linkConfig.MACAddress = "98:fa:9b:0d:e6:58";
+  };
+
+  systemd.network.networks."40-wlan0" = {
+    matchConfig.Name = "wlan0";
+    networkConfig.DHCP = lib.mkForce "ipv4";
   };
 
   # Trust root certificate from tahi for local secure services
@@ -119,48 +143,41 @@ in
   };
   users.users.jellyfin.extraGroups = [ "video" "render" ];
 
-  # 2. Secondary Redundant Pi-hole (rua-pihole)
-  # Disable systemd-resolved DNSStubListener to free port 53 for Pi-hole
-  services.resolved = {
-    enable = true;
-    settings.Resolve = {
-      DNSStubListener = "no";
-    };
-  };
-
-  virtualisation.docker = {
-    enable = true;
-    autoPrune.enable = true;
-  };
-
-  virtualisation.oci-containers = {
-    backend = "docker";
-    containers.pihole = {
-      image = "pihole/pihole:latest";
-      autoStart = true;
-      ports = [
-        "53:53/tcp"
-        "53:53/udp"
-        "8080:80/tcp"
-      ];
-      environment = {
-        TZ = "Pacific/Auckland";
-        FTLCONF_LOCAL_IPV4 = "172.16.1.220";
-        DNSMASQ_LISTENING = "all";
-        FTLCONF_DNS_LISTENINGMODE = "all";
-        PIHOLE_DNS_ = "172.16.1.203;1.1.1.1"; # Upstream via tahi-unbound or Cloudflare
-      };
-      volumes = [
-        "/persistent/var/lib/pihole/etc-pihole:/etc/pihole"
-        "/persistent/var/lib/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
-      ];
-    };
-  };
+  # 2. Secondary Redundant Pi-hole (rua-pihole) - Disabled temporarily to get network baseline solid
+  # virtualisation.docker = {
+  #   enable = true;
+  #   autoPrune.enable = true;
+  # };
+  # virtualisation.oci-containers = {
+  #   backend = "docker";
+  #   containers.pihole = {
+  #     image = "pihole/pihole:latest";
+  #     autoStart = true;
+  #     ports = [
+  #       "53:53/tcp"
+  #       "53:53/udp"
+  #       "8080:80/tcp"
+  #     ];
+  #     environment = {
+  #       TZ = "Pacific/Auckland";
+  #       FTLCONF_LOCAL_IPV4 = "172.16.1.220";
+  #       DNSMASQ_LISTENING = "all";
+  #       FTLCONF_DNS_LISTENINGMODE = "all";
+  #       PIHOLE_DNS_ = "172.16.1.203;1.1.1.1"; # Upstream via tahi-unbound or Cloudflare
+  #     };
+  #     volumes = [
+  #       "/persistent/var/lib/pihole/etc-pihole:/etc/pihole"
+  #       "/persistent/var/lib/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
+  #     ];
+  #   };
+  # };
 
   services = {
     avahi.enable = true;
+    resolved.enable = true;
     udev.enable = true;
     openssh = {
+      enable = true;
       settings = {
         PermitRootLogin = lib.mkForce "prohibit-password";
       };
