@@ -46,6 +46,8 @@ in
       "vm.swappiness" = 10;
       "vm.dirty_background_ratio" = 5;
       "vm.dirty_ratio" = 10;
+      "net.ipv4.conf.all.arp_ignore" = 1;
+      "net.ipv4.conf.all.arp_announce" = 2;
     };
   };
 
@@ -98,13 +100,17 @@ in
   systemd.network.networks."40-eno1" = {
     matchConfig.Name = "eno1";
     networkConfig.DHCP = lib.mkForce "ipv4";
-    dhcpV4Config.ClientIdentifier = "mac";
+    dhcpV4Config = {
+      ClientIdentifier = "mac";
+      RouteMetric = 100;
+    };
     linkConfig.MACAddress = "98:fa:9b:0d:e6:58";
   };
 
   systemd.network.networks."40-wlan0" = {
     matchConfig.Name = "wlan0";
     networkConfig.DHCP = lib.mkForce "ipv4";
+    dhcpV4Config.RouteMetric = 2048;
   };
 
   # Trust root certificate from tahi for local secure services
