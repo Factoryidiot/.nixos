@@ -1,4 +1,4 @@
-# ./hosts/ruru/disko.nix
+# ./hosts/rua/disko.nix
 {
 
   fileSystems."/persistent".neededForBoot = true;

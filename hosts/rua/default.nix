@@ -218,17 +218,6 @@ in
       ];
     };
 
-    # Temporary fallback user for migration continuity
-    users.ruru = {
-      home = "/home/ruru";
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      initialHashedPassword = "$7$GU..../....S9EPW0eEM5JL4uh1Bo1yr/$bDP2HRn7G8LV8jLV2yj3DQHJJPE0svzRh0Q2fEPePN9";
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJCkeOcvLsmdbtI/gkuqGSB5XQYLaLdF74M3Ck2vPuQ rhys@whio"
-      ];
-    };
-
     users.root = {
       initialHashedPassword = "$7$GU..../....S9EPW0eEM5JL4uh1Bo1yr/$bDP2HRn7G8LV8jLV2yj3DQHJJPE0svzRh0Q2fEPePN9";
       openssh.authorizedKeys.keys = [

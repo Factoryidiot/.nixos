@@ -1,4 +1,4 @@
-# ./hosts/ruru/installer.nix
+# ./hosts/rua/installer.nix
 # Headless NixOS installation media configuration for Lenovo ThinkCentre M720q
 { pkgs
 , lib
@@ -10,9 +10,9 @@
   ];
 
   # Identify on local network
-  networking.hostName = "ruru-installer";
+  networking.hostName = "rua-installer";
 
-  # Enable mDNS discovery so it resolves as ruru-installer.local
+  # Enable mDNS discovery so it resolves as rua-installer.local
   services.avahi = {
     enable = true;
     nssmdns4 = true;

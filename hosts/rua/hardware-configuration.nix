@@ -1,4 +1,4 @@
-# /hosts/ruru/hardware-configuration.nix
+# /hosts/rua/hardware-configuration.nix
 { config
 , lib
 , pkgs
@@ -9,7 +9,7 @@ let
   btrfsOptions = [ "noatime" "compress=zstd:1" "ssd" "discard=async" ];
 
   # =========================================================================
-  # Set all 3 UUIDs here after formatting (see hosts/ruru/INSTALL.md)
+  # Set all 3 UUIDs here after formatting (see hosts/rua/INSTALL.md)
   # =========================================================================
   BOOT_ESP_UUID = "2FA0-6F70"; # /dev/nvme0n1p1 (FAT32 EFI partition)
   NVME_LUKS_UUID = "f3153384-24c2-47fd-937c-23cfae68ff51"; # /dev/nvme0n1p2 (LUKS partition)

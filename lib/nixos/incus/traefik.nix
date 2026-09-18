@@ -210,7 +210,6 @@ in
                 interval: 5s
                 timeout: 2s
               servers:
-                - url: \"http://172.16.1.34:8096\"
                 - url: \"http://172.16.1.220:8096\"
       EOF"
 

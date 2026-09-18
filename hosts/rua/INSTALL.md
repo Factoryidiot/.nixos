@@ -1,16 +1,16 @@
-# 🛠️ ruru — NixOS Installation Guide
+# 🛠️ rua — NixOS Installation Guide
 
-This document provides a step-by-step runbook for performing a clean NixOS installation on the **`ruru`** host (Lenovo ThinkCentre M720q Tiny) configured as a loginless Jellyfin media kiosk using Disko, Impermanence, and TPM2 LUKS auto-unlock.
+This document provides a step-by-step runbook for performing a clean NixOS installation on the **`rua`** host (Lenovo ThinkCentre M720q Tiny) configured as a headless compute and media streaming server using Disko, Impermanence, and TPM2 LUKS auto-unlock.
 
 ---
 
 ## 📋 Host Overview
 
-- **Host Target:** `ruru`
+- **Host Target:** `rua`
 - **Chassis:** Lenovo ThinkCentre M720q Tiny
-- **Primary User:** `ruru`
-- **Role:** Loginless Jellyfin Kiosk with Cage Wayland compositor and HDMI output to TV
-- **Target Drive:** `/dev/nvme0n1` (Change to `/dev/sda` in `hosts/ruru/disko.nix` if using 2.5" SATA)
+- **Primary User:** `factory`
+- **Role:** Headless compute & Jellyfin media streaming server with Intel QuickSync QSV
+- **Target Drive:** `/dev/nvme0n1` (Change to `/dev/sda` in `hosts/rua/disko.nix` if using 2.5" SATA)
 - **Encryption:** LUKS2 (`crypted`) auto-unlocked via TPM 2.0
 - **Filesystem:** Btrfs with `tmpfs` stateless root
 
@@ -72,14 +72,14 @@ cd ~/.nixos
    ```bash
    lsblk
    ```
-   *(If your drive is `/dev/sda`, update the `device = "/dev/nvme0n1";` line in `hosts/ruru/disko.nix`)*.
+   *(If your drive is `/dev/sda`, update the `device = "/dev/nvme0n1";` line in `hosts/rua/disko.nix`)*.
 
 2. Execute automated Disko partitioning:
    ```bash
    nix --experimental-features "nix-command flakes" \
      run github:nix-community/disko/latest -- \
      --mode disko \
-     ./hosts/ruru/disko.nix
+     ./hosts/rua/disko.nix
    ```
 
    > [!NOTE]
@@ -106,18 +106,18 @@ cd ~/.nixos
    nixos-generate-config --root /mnt
    ```
 
-2. Export partition and filesystem UUIDs directly into helper file `hosts/ruru/UUID`:
+2. Export partition and filesystem UUIDs directly into helper file `hosts/rua/UUID`:
    ```bash
-   cat <<EOF > hosts/ruru/UUID
+   cat <<EOF > hosts/rua/UUID
      BOOT_ESP_UUID  = "$(blkid -s UUID -o value /dev/nvme0n1p1)"; # FAT32 EFI partition
      NVME_LUKS_UUID = "$(blkid -s UUID -o value /dev/nvme0n1p2)"; # LUKS partition
      BTRFS_UUID     = "$(blkid -s UUID -o value /dev/mapper/crypted)"; # Decrypted BTRFS filesystem
    EOF
-   cat hosts/ruru/UUID
+   cat hosts/rua/UUID
    ```
    *(If using SATA `/dev/sda`, adjust device names to `/dev/sda1` and `/dev/sda2`)*.
 
-3. Update the `let` block in [`hosts/ruru/hardware-configuration.nix`](file:///home/factory/.nixos/hosts/ruru/hardware-configuration.nix) to match the UUIDs generated above.
+3. Update the `let` block in [`hosts/rua/hardware-configuration.nix`](file:///home/factory/.nixos/hosts/rua/hardware-configuration.nix) to match the UUIDs generated above.
 
 4. Remove the temporary template directory:
    ```bash
@@ -133,9 +133,9 @@ cd ~/.nixos
    git add .
    ```
 
-2. Run the NixOS installer targeting `ruru`:
+2. Run the NixOS installer targeting `rua`:
    ```bash
-   nixos-install --root /mnt --no-root-password --flake .#ruru --no-write-lock-file
+   nixos-install --root /mnt --no-root-password --flake .#rua --no-write-lock-file
    ```
 
 ---
@@ -146,7 +146,7 @@ Prepare the persistent directories so essential state and SSH host keys survive 
 
 1. Create persistent directory structure:
    ```bash
-   mkdir -p /mnt/persistent/home/ruru/.nixos
+   mkdir -p /mnt/persistent/home/factory/.nixos
    mkdir -p /mnt/persistent/etc
    ```
 
@@ -157,12 +157,12 @@ Prepare the persistent directories so essential state and SSH host keys survive 
 
 3. Copy the repository to persistent user storage:
    ```bash
-   cp -r ~/.nixos/* ~/.nixos/.* /mnt/persistent/home/ruru/.nixos/ 2>/dev/null || cp -r ~/.nixos /mnt/persistent/home/ruru/
+   cp -r ~/.nixos/* ~/.nixos/.* /mnt/persistent/home/factory/.nixos/ 2>/dev/null || cp -r ~/.nixos /mnt/persistent/home/factory/
    ```
 
-4. Set proper file ownership (`1000:100` for user `ruru`):
+4. Set proper file ownership (`1000:100` for user `factory`):
    ```bash
-   chown -R 1000:100 /mnt/persistent/home/ruru
+   chown -R 1000:100 /mnt/persistent/home/factory
    ```
 
 ---
@@ -175,18 +175,17 @@ Prepare the persistent directories so essential state and SSH host keys survive 
    ```
 
 2. Upon reboot, enter your LUKS passphrase when prompted.
-3. The system will automatically log into Cage and start Jellyfin Media Player in Big Screen TV mode under user `ruru`.
-4. From `whio`, SSH into `ruru` as root (authenticated with your `rhys@whio` SSH key):
+3. The system will automatically boot headlessly into systemd services.
+4. From `whio`, SSH into `rua` as `factory` (authenticated with your `rhys@whio` SSH key):
    ```bash
-   ssh root@<ruru-ip>
+   ssh factory@<rua-ip>
    ```
-   *(Note: User `ruru` is an unprivileged kiosk account without sudo access. Administration and updates from `whio` are performed directly via `ssh root@<ruru-ip>`)*.
 
 5. Enroll the TPM 2.0 security chip for automatic passwordless unlocking:
    ```bash
-   systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" /dev/disk/by-uuid/<NVME_LUKS_UUID>
+   sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" /dev/disk/by-uuid/<NVME_LUKS_UUID>
    ```
-6. Reboot once more to verify unattended, passwordless boot straight into the Jellyfin kiosk:
+6. Reboot once more to verify unattended, passwordless boot straight into the Jellyfin compute node:
    ```bash
-   reboot
+   sudo reboot
    ```

@@ -10,7 +10,7 @@ This document provides a comprehensive, production-grade architectural and opera
 graph TD
     subgraph LAN ["Local Network (172.16.1.0/24)"]
         CLIENTS["Clients & Workstations"]
-        KIOSK["Living Room Kiosk (ruru - 172.16.1.34)"]
+        TV["Samsung Smart TV (Jellyfin App)"]
     end
 
     subgraph Host ["tahi Host (172.16.1.200)"]
@@ -18,7 +18,7 @@ graph TD
         NFT["nftables Firewall"]
         ZFS_TANK["ZFS Pool: tank (10.8 TB RAIDZ1)"]
         SMB["Samba Daemon (/storage/data)"]
-        GPU["AMD Radeon R5/R6 APU (/dev/dri/renderD128)"]
+        NFS["NFS v4.2 Server (/storage/data/media)"]
 
         ZFS_DATA["Dataset: tank/data (/storage/data, 1M recordsize)"]
         ZFS_APP["Dataset: tank/appdata (/storage/appdata, 16k recordsize)"]
@@ -27,6 +27,11 @@ graph TD
         ZFS_TANK --> ZFS_DATA
         ZFS_TANK --> ZFS_APP
         ZFS_TANK --> ZFS_INCUS
+        ZFS_DATA --> NFS
+    end
+
+    subgraph ComputeNode ["Compute Node (rua - 172.16.1.220)"]
+        RUA_JF["Jellyfin Media Server<br/>Intel QuickSync (iGPU QSV)"]
     end
 
     subgraph IncusGateway ["Incus: Ingress & Core Network"]
@@ -41,7 +46,6 @@ graph TD
     end
 
     subgraph IncusMedia ["Incus: Media & Automation"]
-        JF_CT["tahi-jellyfin (172.16.1.210)<br/>Dedicated Streaming Server"]
         ARR_CT["tahi-arr (172.16.1.211)<br/>Download & Automation Stack"]
 
         subgraph ArrServices ["Docker Compose inside tahi-arr"]
@@ -58,16 +62,14 @@ graph TD
     CLIENTS -->|"DNS Queries"| PIHOLE
     CLIENTS -->|"HTTPS (*.lan)"| TRAEFIK
     CLIENTS -->|"SMB File Sharing"| SMB
-    KIOSK -->|"Direct Stream: :8096"| JF_CT
+    TV -->|"Direct Stream: :8096"| RUA_JF
+    NFS -->|"NFS v4.2 /data/media"| RUA_JF
 
-    TRAEFIK -->|"Reverse Proxy"| JF_CT
+    TRAEFIK -->|"Reverse Proxy"| RUA_JF
     TRAEFIK -->|"Reverse Proxy"| ArrServices
     TRAEFIK -->|"mTLS Passthrough"| Host
 
-    GPU -->|"GPU Passthrough"| JF_CT
-    ZFS_DATA -->|"Incus disk device (shift=true)"| JF_CT
     ZFS_DATA -->|"Incus disk device (shift=true)"| ARR_CT
-    ZFS_APP -->|"Incus disk device (shift=true)"| JF_CT
     ZFS_APP -->|"Incus disk device (shift=true)"| ARR_CT
 ```
 
@@ -80,11 +82,11 @@ All web services are securely exposed on the local network via trusted HTTPS cer
 | Service | Container | IP Address | Internal Port | Public URL | Purpose / Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Traefik** | `tahi-traefik` | `172.16.1.201` | `80`, `443` | `https://traefik.lan` | Edge reverse proxy & SSL termination |
-| **Step-CA** | `tahi-ca` | `172.16.1.204` | `443` | `https://ca.lan` | Smallstep Internal Certificate Authority |
+| **Step-CA`** | `tahi-ca` | `172.16.1.204` | `443` | `https://ca.lan` | Smallstep Internal Certificate Authority |
 | **Pi-hole** | `tahi-pihole` | `172.16.1.202` | `53`, `80` | `https://pihole.lan` | Network DNS ad-blocker & `.lan` resolver |
 | **Unbound** | `tahi-unbound` | `172.16.1.203` | `53` | `172.16.1.203:53` | Recursive root DNS with DNSSEC |
 | **Incus Web UI** | `tahi` (Host) | `172.16.1.200` | `8443` | `https://incus.lan` | Incus container/VM management console (mTLS) |
-| **Jellyfin** | `tahi-jellyfin` | `172.16.1.210` | `8096` | `https://jellyfin.lan` | Hardware-accelerated media streaming server |
+| **Jellyfin** | `rua` (Host) | `172.16.1.220` | `8096` | `https://jellyfin.lan` | Intel QuickSync hardware-accelerated media server |
 | **SABnzbd** | `tahi-arr` | `172.16.1.211` | `8080` | `https://sabnzbd.lan` | Usenet NZB download client (encrypted NNTP) |
 | **Sonarr** | `tahi-arr` | `172.16.1.211` | `8989` | `https://sonarr.lan` | TV series collection automation & management |
 | **Radarr** | `tahi-arr` | `172.16.1.211` | `7878` | `https://radarr.lan` | Movie collection automation & management |
