@@ -130,7 +130,7 @@ Because `tahi` is a headless server with password authentication disabled (`Pass
 
 4. Add your authorized client SSH public key:
    ```bash
-   echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJCkeOcvLsmdbtI/gkuqGSB5XQYLaLdF74M3Ck2vPuQ rhys@whio" >> /mnt/persistent/home/factory/.ssh/authorized_keys
+   echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJCkeOcvLsmdbtI/gkuqGSB5XQYLaLdF74M3Ck2vPuQ factory@whio" >> /mnt/persistent/home/factory/.ssh/authorized_keys
    ```
 
 5. Set strict permissions and ownership (`1000:100` for user `factory`):

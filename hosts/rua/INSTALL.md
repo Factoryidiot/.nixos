@@ -176,7 +176,7 @@ Prepare the persistent directories so essential state and SSH host keys survive 
 
 2. Upon reboot, enter your LUKS passphrase when prompted.
 3. The system will automatically boot headlessly into systemd services.
-4. From `whio`, SSH into `rua` as `factory` (authenticated with your `rhys@whio` SSH key):
+4. From `whio`, SSH into `rua` as `factory` (authenticated with your `factory@whio` SSH key):
    ```bash
    ssh factory@<rua-ip>
    ```

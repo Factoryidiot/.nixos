@@ -32,9 +32,9 @@
     };
   };
 
-  # Pre-authorized SSH key for Rhys from whio
+  # Pre-authorized SSH key for factory from whio
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJCkeOcvLsmdbtI/gkuqGSB5XQYLaLdF74M3Ck2vPuQ rhys@whio"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFJCkeOcvLsmdbtI/gkuqGSB5XQYLaLdF74M3Ck2vPuQ factory@whio"
   ];
 
   # Helpful utilities pre-loaded in the installer
