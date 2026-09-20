@@ -36,7 +36,6 @@ The system uses a single encrypted NVMe drive partitioned with [`disko`](file://
         ├── subvol=@swap ─────────────────────────── /swap (Contains 24 GiB swapfile, nodatacow)
         ├── subvol=@tmp ──────────────────────────── /tmp (Fast transient builds)
         ├── subvol=@guix ─────────────────────────── /gnu (Guix compatibility layer)
-        ├── subvol=@snapshots ────────────────────── /snapshots (Snapper filesystem snapshots)
         └── subvolid=5 ───────────────────────────── /btr_pool (Top-level Btrfs filesystem access)
 ```
 
@@ -50,7 +49,6 @@ The system uses a single encrypted NVMe drive partitioned with [`disko`](file://
 | `/persistent` | `/dev/mapper/crypted` (`@persistent`) | `btrfs` | `noatime,compress=zstd:1,ssd,discard=async` | All persistent system state & user dotfiles |
 | `/swap` | `/dev/mapper/crypted` (`@swap`) | `btrfs` | `noatime,nodatacow` | 24 GiB swapfile for hibernation and memory overflow |
 | `/tmp` | `/dev/mapper/crypted` (`@tmp`) | `btrfs` | `noatime,compress=zstd:1,ssd,discard=async` | Temporary build directories |
-| `/snapshots` | `/dev/mapper/crypted` (`@snapshots`) | `btrfs` | `noatime,compress=zstd:1,ssd,discard=async` | Snapper snapshots |
 
 ---
 
