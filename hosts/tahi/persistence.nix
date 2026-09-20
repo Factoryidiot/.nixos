@@ -42,6 +42,7 @@ in
       directories = [
         ".dotfiles"
         ".nixos"
+        "Downloads"
         "Projects"
 
         # .config
