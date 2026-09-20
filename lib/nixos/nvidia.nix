@@ -20,7 +20,7 @@
       # Nvidia power management.
       powerManagement = {
         enable = true;
-        finegrained = false;
+        finegrained = lib.mkDefault false;
       };
     };
   };

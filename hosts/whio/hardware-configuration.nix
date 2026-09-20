@@ -28,7 +28,7 @@ in
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "sd_mod" "usbhid" "usb_storage" ];
   boot.initrd.kernelModules = [ ];
   boot.initrd.systemd.enable = true;
-  boot.kernelParams = [ "amd_pstate=active" "iommu=pt" "nvidia-drm.fbdev=1" ];
+  boot.kernelParams = [ "amd_pstate=active" "iommu=pt" ];
   boot.kernelModules = [ "amdgpu" "kvm-amd" ];
   boot.extraModulePackages = [ ];
   boot.tmp.cleanOnBoot = true; # clear /tmp on boot to get a stateless /tmp directory

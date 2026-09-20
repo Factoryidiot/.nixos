@@ -37,12 +37,15 @@ in
 
   hardware.cpu.amd.updateMicrocode = true;
 
-  hardware.nvidia.prime = {
-    amdgpuBusId = "PCI:65:0:0";
-    nvidiaBusId = "PCI:01:0:0";
-    offload = {
-      enable = true;
-      enableOffloadCmd = true; # command: nvidia-offload
+  hardware.nvidia = {
+    powerManagement.finegrained = true;
+    prime = {
+      amdgpuBusId = "PCI:65:0:0";
+      nvidiaBusId = "PCI:01:0:0";
+      offload = {
+        enable = true;
+        enableOffloadCmd = true; # command: nvidia-offload
+      };
     };
   };
 
