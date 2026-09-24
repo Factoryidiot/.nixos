@@ -20,6 +20,7 @@ in
       "/var/lib/iwd"
       "/var/lib/nixos"
       "/var/log" # logs and troubleshooting
+      "/var/lib/systemd/coredump" # persistent core dumps
     ];
 
     files = [
@@ -77,6 +78,7 @@ in
 
         #+----- Applications ---------------------
         ".local/share/applications"
+        ".local/share/hyprland" # Hyprland crash reports & logs
 
         ".local/state"
 

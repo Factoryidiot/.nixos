@@ -44,6 +44,8 @@
     shellAliases = {
       diff = "--color=auto";
       grep = "rg --color=auto";
+      crash-log = "journalctl -b -1 -p 3 -n 80";
+      crash-cores = "coredumpctl list -n 10";
     };
 
     syntaxHighlighting.enable = true;

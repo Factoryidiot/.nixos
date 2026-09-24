@@ -54,10 +54,36 @@ in
       options iwlwifi disable_11ax=Y
     '';
     kernel.sysctl = {
-      "vfs_cache_pressure" = 50;
+      "vm.vfs_cache_pressure" = 50;
       "vm.swappiness" = 10;
       "vm.dirty_background_ratio" = 5;
       "vm.dirty_ratio" = 10;
+      "kernel.sysrq" = 1;
+      "kernel.hung_task_timeout_secs" = 30;
+    };
+  };
+
+  #+----- Logging & Crash Observability --------
+  services.journald.extraConfig = ''
+    Storage=persistent
+    SyncIntervalSec=1s
+    SystemMaxUse=1G
+    SystemKeepFree=10G
+    SystemMaxFileSize=100M
+    MaxRetentionSec=14day
+  '';
+
+  systemd.coredump = {
+    enable = true;
+    settings = {
+      Coredump = {
+        Storage = "persistent";
+        Compress = "yes";
+        ProcessSizeMax = "1G";
+        ExternalSizeMax = "1G";
+        MaxUse = "1G";
+        KeepFree = "10G";
+      };
     };
   };
 
