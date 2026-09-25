@@ -8,6 +8,14 @@
     MOZ_ENABLE_WAYLAND = "1"; # Force Wayland
   };
 
+  # Co-located persistence for browser profiles
+  home.persistence."/persistent" = {
+    directories = [
+      ".config/chromium"
+      ".mozilla"
+    ];
+  };
+
   programs.chromium = {
     enable = true;
     commandLineArgs = [

@@ -8,6 +8,7 @@
     ./shell/bat.nix
     ./shell/deja.nix
     ./shell/eza.nix
+    ./shell/fast-syntax-highlighting.nix
     ./shell/fastfetch.nix
     ./shell/fzf.nix
     ./shell/starship.nix

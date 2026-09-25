@@ -3,6 +3,12 @@
 , ...
 }: {
 
+  home.persistence."/persistent" = {
+    files = [
+      ".config/zsh/.zsh_history"
+    ];
+  };
+
   programs.zsh = {
     enable = true;
 
@@ -16,12 +22,6 @@
       save = 10000;
       size = 10000;
     };
-
-    initContent = ''
-      if [ "$TERM" = "linux" ]; then
-        fastfetch
-      fi
-    '';
 
     setOptions = [
       #+----- History ----------------------------
@@ -45,15 +45,12 @@
       crash-cores = "coredumpctl list -n 10";
     };
 
-    syntaxHighlighting.enable = true;
-
     zplug = {
       enable = true;
       zplugHome = "${config.programs.zsh.dotDir}/.zplug";
       plugins = [
-        { name = "zsh-users/zsh-history-substring-search"; }
+        #{ name = "zsh-users/zsh-history-substring-search"; }
         #{ name = "jeffreytse/zsh-vi-mode"; }
-        #{ name = "zdharma-continuum/fast-syntax-highlighting"; }
       ];
     };
 

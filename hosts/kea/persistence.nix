@@ -58,21 +58,16 @@ in
         #+----- Browser --------------------------
         ".config/Bitwarden"
         #".config/google-chrome"
-        ".config/chromium"
         #".config/helium"
         #".config/net.imput.helium"
         #".config/BraveSoftware"
         #".config/obsidian"
-        ".mozilla"
 
         #+----- Applications ---------------------
         ".local/share/applications"
 
         ".local/state"
 
-      ];
-      files = [
-        ".config/zsh/.zsh_history"
       ];
     };
   };

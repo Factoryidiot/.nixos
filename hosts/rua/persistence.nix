@@ -54,9 +54,6 @@ in
           mode = "0700";
         }
       ];
-      files = [
-        ".config/zsh/.zsh_history"
-      ];
     };
   };
 
