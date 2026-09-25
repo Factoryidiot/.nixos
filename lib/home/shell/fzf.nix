@@ -31,4 +31,8 @@
     tmux.enableShellIntegration = true;
   };
 
+  programs.zsh.zplug.plugins = [
+    { name = "Aloxaf/fzf-tab"; }
+  ];
+
 }

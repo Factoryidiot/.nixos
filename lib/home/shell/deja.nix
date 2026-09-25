@@ -1,6 +1,5 @@
 # ./lib/home/shell/deja.nix
-{ config
-, lib
+{ lib
 , pkgs
 , ...
 }:
