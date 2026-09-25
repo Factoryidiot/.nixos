@@ -6,6 +6,7 @@
 
   imports = [
     ./shell/bat.nix
+    ./shell/deja.nix
     ./shell/eza.nix
     ./shell/fastfetch.nix
     ./shell/fzf.nix

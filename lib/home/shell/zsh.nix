@@ -8,11 +8,6 @@
 
     autocd = true;
 
-    autosuggestion = {
-      enable = true;
-      strategy = [ "completion" ];
-    };
-
     dotDir = "${config.home.homeDirectory}/.config/zsh";
 
     history = {
@@ -29,13 +24,15 @@
     '';
 
     setOptions = [
-      #+----- Hostory ----------------------------
+      #+----- History ----------------------------
       "APPEND_HISTORY"
-      "SHARE_HISTORY"
-      "HIST_IGNORE_DUPS"
-      "HIST_IGNORE_SPACE"
       "HIST_EXPIRE_DUPS_FIRST"
       "HIST_FIND_NO_DUPS"
+      "HIST_IGNORE_DUPS"
+      "HIST_IGNORE_SPACE"
+      "HIST_REDUCE_BLANKS"
+      "INC_APPEND_HISTORY"
+      "SHARE_HISTORY"
       #+----- Shell ------------------------------
       "NOBEEP"
       "NUMERIC_GLOB_SORT"
