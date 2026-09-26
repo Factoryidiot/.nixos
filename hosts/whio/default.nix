@@ -37,7 +37,7 @@ in
   hardware.cpu.amd.updateMicrocode = true;
 
   hardware.nvidia = {
-    powerManagement.finegrained = true;
+    powerManagement.finegrained = false;
     prime = {
       amdgpuBusId = "PCI:65:0:0";
       nvidiaBusId = "PCI:01:0:0";
