@@ -129,8 +129,25 @@ in
     libinput.enable = true; # Input
     printing.enable = true; # Printing
     resolved.enable = true; # DNS
-    udev.enable = true; # Hardware
+    udev = {
+      enable = true;
+      # Disable wakeup on NVIDIA PCIe bridge (0000:00:01.1) to ignore HDMI HPD jitter
+      extraRules = ''
+        ACTION=="add|change", SUBSYSTEM=="pci", KERNEL=="0000:00:01.1", ATTR{power/wakeup}="disabled"
+      '';
+    };
   };
+
+  #+----- Sleep & Wakeup Management ------------
+  powerManagement.powerDownCommands = ''
+    # Prevent NVIDIA PCIe bridge (GPP0) from waking the laptop on HDMI/display hotplug jitter
+    if grep -q "^GPP0.*\*enabled" /proc/acpi/wakeup; then
+      echo GPP0 > /proc/acpi/wakeup
+    fi
+    if [ -w /sys/bus/pci/devices/0000:00:01.1/power/wakeup ]; then
+      echo disabled > /sys/bus/pci/devices/0000:00:01.1/power/wakeup
+    fi
+  '';
 
   users = {
     users.${username} = {
