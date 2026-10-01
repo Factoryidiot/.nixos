@@ -129,11 +129,14 @@ in
     libinput.enable = true; # Input
     printing.enable = true; # Printing
     resolved.enable = true; # DNS
+    supergfxd.enable = false; # Disabled: conflicts with PRIME offload & forces dGPU RTD3 while driving HDMI
     udev = {
       enable = true;
-      # Disable wakeup on NVIDIA PCIe bridge (0000:00:01.1) to ignore HDMI HPD jitter
       extraRules = ''
+        # Disable wakeup on NVIDIA PCIe bridge (0000:00:01.1) to ignore HDMI HPD jitter
         ACTION=="add|change", SUBSYSTEM=="pci", KERNEL=="0000:00:01.1", ATTR{power/wakeup}="disabled"
+        # Force NVIDIA dGPU (0000:01:00.0) power control to "on" to prevent runtime D3 sleep while driving HDMI display
+        ACTION=="add|change", SUBSYSTEM=="pci", KERNEL=="0000:01:00.0", ATTR{power/control}="on"
       '';
     };
   };

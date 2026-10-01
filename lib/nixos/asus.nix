@@ -1,5 +1,6 @@
 # ./lib/nixos/asus.nix
 { inputs
+, lib
 , pkgs
 , ...
 }:
@@ -47,7 +48,7 @@ in
     package = unstable-asusctl;
   };
 
-  services.supergfxd.enable = true;
+  services.supergfxd.enable = lib.mkDefault false;
 
   #+----- Impermanence Persistence -------------
   # Modular persistence: persist ROG laptop charge limit, lighting, and fan profiles
