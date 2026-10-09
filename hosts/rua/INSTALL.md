@@ -183,7 +183,7 @@ Prepare the persistent directories so essential state and SSH host keys survive 
 
 5. Enroll the TPM 2.0 security chip for automatic passwordless unlocking:
    ```bash
-   sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" /dev/disk/by-uuid/<NVME_LUKS_UUID>
+   sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7" /dev/disk/by-uuid/<NVME_LUKS_UUID>
    ```
 6. Reboot once more to verify unattended, passwordless boot straight into the Jellyfin compute node:
    ```bash

@@ -1,7 +1,11 @@
 # lib/nixos/secrets.nix
 { inputs
+, specialArgs
 , ...
 }:
+let
+  inherit (specialArgs) username;
+in
 {
   imports = [
     inputs.agenix.nixosModules.default
@@ -14,11 +18,11 @@
   age.secrets = {
     "git-config" = {
       file = ../../secrets/git-config.age;
-      owner = "factory";
+      owner = username;
     };
     "github-token" = {
       file = ../../secrets/github.age; # Make sure this matches the filename!
-      owner = "factory";
+      owner = username;
     };
   };
 

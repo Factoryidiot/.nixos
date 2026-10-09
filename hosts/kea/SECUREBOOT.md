@@ -78,16 +78,16 @@ sudo nix run nixpkgs#sbctl enroll-keys -- --microsoft
 
 Enroll the TPM2 chip on **both** the primary SSD container and the secondary storage container:
 
-### 1. Enroll Primary SSD Container (`/dev/sda2`)
+### 1. Enroll Primary SSD Container (UUID `183e165a-c486-46eb-b124-cef8f85a2892`)
 
 ```bash
-sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" --wipe-slot tpm2 /dev/sda2
+sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7" --wipe-slot tpm2 /dev/disk/by-uuid/183e165a-c486-46eb-b124-cef8f85a2892
 ```
 
-### 2. Enroll Secondary Storage Container (`/dev/sdb1`)
+### 2. Enroll Secondary Storage Container (UUID `0d983907-2c76-42eb-9567-3c639b0fca81`)
 
 ```bash
-sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" --wipe-slot tpm2 /dev/sdb1
+sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7" --wipe-slot tpm2 /dev/disk/by-uuid/0d983907-2c76-42eb-9567-3c639b0fca81
 ```
 
 ---
@@ -98,10 +98,10 @@ Generate recovery keys for both containers and record them in a secure password 
 
 ```bash
 # Recovery key for SSD
-sudo systemd-cryptenroll --recovery-key /dev/sda2
+sudo systemd-cryptenroll --recovery-key /dev/disk/by-uuid/183e165a-c486-46eb-b124-cef8f85a2892
 
 # Recovery key for Storage HDD
-sudo systemd-cryptenroll --recovery-key /dev/sdb1
+sudo systemd-cryptenroll --recovery-key /dev/disk/by-uuid/0d983907-2c76-42eb-9567-3c639b0fca81
 ```
 
 ---
@@ -109,8 +109,8 @@ sudo systemd-cryptenroll --recovery-key /dev/sdb1
 ### 4. Verify LUKS Key Slots
 
 ```bash
-sudo cryptsetup luksDump /dev/sda2
-sudo cryptsetup luksDump /dev/sdb1
+sudo cryptsetup luksDump /dev/disk/by-uuid/183e165a-c486-46eb-b124-cef8f85a2892
+sudo cryptsetup luksDump /dev/disk/by-uuid/0d983907-2c76-42eb-9567-3c639b0fca81
 ```
 
 Both containers will now unlock seamlessly at boot via TPM2.

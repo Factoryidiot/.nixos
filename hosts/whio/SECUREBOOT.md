@@ -83,12 +83,12 @@ sudo nix run nixpkgs#sbctl enroll-keys -- --microsoft
 
 ## 🔑 Part 2: TPM2 Automatic LUKS Unlocking
 
-Once Secure Boot is enforced, bind LUKS volume `/dev/nvme0n1p2` to the TPM2 chip using PCRs `0+2+7+12` (Firmware + Option ROMs + Secure Boot Policy + Unified Kernel Image measurements).
+Once Secure Boot is enforced, bind LUKS volume `/dev/nvme0n1p2` to the TPM2 chip using PCRs `0+2+7` (Firmware + Option ROMs + Secure Boot Policy measurements).
 
 ### 1. Enroll TPM2 on the NVMe Drive
 
 ```bash
-sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7+12" --wipe-slot tpm2 /dev/nvme0n1p2
+sudo systemd-cryptenroll --tpm2-device auto --tpm2-pcrs "0+2+7" --wipe-slot tpm2 /dev/nvme0n1p2
 ```
 
 ---
