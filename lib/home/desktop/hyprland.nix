@@ -10,7 +10,9 @@
     xwayland.enable = true;
   };
 
-  services.hyprsunset.enable = true;
+  # Disabled: background hyprsunset pushes CTM updates on clock sync/wake, which
+  # triggers an EVO pushbuffer deadlock in nvidia-modeset when driving HDMI-A-1.
+  services.hyprsunset.enable = false;
   services.hypridle.enable = true;
 
   systemd.user.services.hypridle = {
